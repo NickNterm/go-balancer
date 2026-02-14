@@ -1,0 +1,15 @@
+{
+  "addr": ":8000",
+  "algorithm": "random",
+  "healthCheckDelay": 10,
+  "servers": [
+    {
+      "addr": "http://localhost:9001",
+      "weigth": 0.9
+    },
+    {
+      "addr": "http://localhost:9000",
+      "weigth": 0.1
+    }
+  ]
+}
