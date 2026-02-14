@@ -3,11 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/NickNterm/go-balancer/internal/proxy"
 )
 
 type application struct {
-	config  Config
-	proxies []Proxy
+	config    Config
+	proxies   []proxy.Proxy
+	algorithm Algorithm
 }
 
 func (app *application) run() error {

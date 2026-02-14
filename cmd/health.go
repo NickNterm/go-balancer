@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/NickNterm/go-balancer/internal/healtchecker"
+	"github.com/NickNterm/go-balancer/internal/proxy"
 )
 
 func (app *application) HealthCheckEveryTime() {
@@ -18,7 +19,7 @@ func (app *application) HealthCheckEveryTime() {
 
 			for i := range app.proxies {
 				wg.Add(1)
-				go func(proxy *Proxy) {
+				go func(proxy *proxy.Proxy) {
 					defer wg.Done()
 					CheckProxy(proxy)
 				}(&app.proxies[i])
@@ -32,11 +33,11 @@ func calculateAverage(oldAvg int32, value int32) int32 {
 	return int32(float64(oldAvg) + 0.5*(float64(value)-float64(oldAvg)))
 }
 
-func CheckProxy(proxy *Proxy) {
-	log.Printf("url: %s avrg: %d health: %t", proxy.addr, proxy.avgResponse, proxy.isHealthy)
-	success, time := healtchecker.CheckHealth(proxy.addr)
-	proxy.isHealthy = success
+func CheckProxy(p *proxy.Proxy) {
+	log.Printf("url: %s avrg: %d health: %t", p.Addr, p.AvgResponse, p.IsHealthy)
+	success, time := healtchecker.CheckHealth(p.Addr)
+	p.IsHealthy = success
 	if success {
-		proxy.avgResponse = calculateAverage(proxy.avgResponse, time)
+		p.AvgResponse = calculateAverage(p.AvgResponse, time)
 	}
 }

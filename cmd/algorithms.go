@@ -1,7 +1,14 @@
 package main
 
-type Algorithm string
+import "github.com/NickNterm/go-balancer/internal/proxy"
+
+type AlgorithmType string
 
 const (
-	Random Algorithm = "random"
+	Random     AlgorithmType = "random"
+	RoundRobin AlgorithmType = "round-robin"
 )
+
+type Algorithm interface {
+	ProcessRequest(proxies []proxy.Proxy) (*proxy.Proxy, error)
+}

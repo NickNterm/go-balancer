@@ -4,11 +4,19 @@
   "healthCheckDelay": 10,
   "servers": [
     {
-      "addr": "http://localhost:9001",
+      "addr": "http://localhost:9000",
       "weigth": 0.9
     },
     {
-      "addr": "http://localhost:9000",
+      "addr": "http://localhost:9001",
+      "weigth": 0.1
+    },
+    {
+      "addr": "http://localhost:9002",
+      "weigth": 0.1
+    },
+    {
+      "addr": "http://localhost:9003",
       "weigth": 0.1
     }
   ]

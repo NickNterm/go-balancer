@@ -4,17 +4,14 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
+	"github.com/NickNterm/go-balancer/internal/proxy"
 )
 
-type ServerConfig struct {
-	Addr   string  `json:"addr"`
-	Weight float32 `json:"weight"`
-}
-
 type Config struct {
-	Algorithm    Algorithm      `json:"algorithm"`
+	Algorithm    AlgorithmType  `json:"algorithm"`
 	Addr         string         `json:"addr"`
-	Servers      []ServerConfig `json:"servers"`
+	Servers      []proxy.Server `json:"servers"`
 	HealthTicker int            `json:"healthCheckDelay"`
 }
 
