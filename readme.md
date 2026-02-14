@@ -1,12 +1,14 @@
 # Go Balancer
 
-This is a short project to learn some basics about _Golang_. Thinking about a project to implement I thought it would be fun to make something useful and simple in theory.
+This is a short project to learn some basics about _Golang_. Thinking about a project to implement I thought it would be fun to make something useful and simple in theory. The goal is to have a rather small but good project so that I can show some basic skills in go
 
 ## What is the project about?
 
 I am trying to create a load balancer in _Go_ for learing purposes. In general the idea is simple. Let's say we have a service in a number of servers running and we need a service to distribute traffic out for many users. In most of the small projects that's not a problem but with huge loads a load balancer is a good solution.
 
 Idealy you wouldn't write your own load balancer but you would use a service like AWS, Cloudflare or Nginx etc. So getting this out of the way we are going to make our own load balancer with go with some simple algorithms and a list of more features you can see below!
+
+The goal for me would be create some mock services with silly data and try to see how each algorithm treats the request and do tests around those
 
 ## Features / What's next?
 
@@ -26,6 +28,8 @@ So here will be a list of goals and what is already achived so I will call this 
 - ~~Give a way to create test servers for testing the system~~
 - Test the algorithms and the proxy system with unit tests
 - Recovery system for the Down servers
+- **Hot** having a database to store basic stats for distribution
+- Store uptime for each server (like Kume does)
 
 ## How to run
 
