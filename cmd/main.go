@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/NickNterm/go-balancer/internal/algorithms"
 	"github.com/NickNterm/go-balancer/internal/proxy"
-	"github.com/NickNterm/go-balancer/pkg/algorithms"
 )
 
 func main() {

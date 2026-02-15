@@ -22,7 +22,7 @@ So here will be a list of goals and what is already achived so I will call this 
   - IP Hash
   - Least Response Time
   - ~~Random~~
-- Have a great way to "deploy" the balancer (docker or cli I guess)
+- ~~Have a great way to "deploy" the balancer (docker or releases)~~
 - ~~Health check on servers~~
 - n8n workflow that triggers with a webhook when a server is down to get telegram notifications
 - ~~Give a way to create test servers for testing the system~~
@@ -33,16 +33,22 @@ So here will be a list of goals and what is already achived so I will call this 
 
 ## How to run
 
-Idealy I will pack this into a docker or a cli command and you will have a config file like that
+You have a couple of ways to run this project
+
+1. Clone this repo and use air to run it locally
+2. Use the releases in git and install the latest executable
+3. Also I would have dockerize it and let you docker pull it but it's not up in docker hub yet ):
+
+How to write the config.json
 
 ```json
 {
-  "addr": ":8000",
-  "algorithm": "random",
-  "healthCheckDelay": 10,
+  "addr": ":8000", // the address that the load balancer runs
+  "algorithm": "random", // the algorithm random, round-robin
+  "healthCheckDelay": 10, // the second between each ping in the servers
   "servers": [
     {
-      "addr": "http://localhost:9000",
+      "addr": "http://localhost:9000", // http url from each server
       "weigth": 0.9
     },
     {
@@ -51,10 +57,6 @@ Idealy I will pack this into a docker or a cli command and you will have a confi
     },
     {
       "addr": "http://localhost:9002",
-      "weigth": 0.1
-    },
-    {
-      "addr": "http://localhost:9003",
       "weigth": 0.1
     }
   ]

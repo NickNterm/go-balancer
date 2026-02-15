@@ -35,7 +35,7 @@ func CreateReverseProxies(servers []Server) ([]Proxy, error) {
 		proxy := Proxy{
 			Proxy:       NewProxy(url),
 			Addr:        servers[i].Addr,
-			IsHealthy:   true,
+			IsHealthy:   false,
 			AvgResponse: 1,
 		}
 		proxies = append(proxies, proxy)
