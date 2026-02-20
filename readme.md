@@ -20,11 +20,11 @@ So here will be a list of goals and what is already achived so I will call this 
   - Least Connections
   - Weighted Least Connections
   - IP Hash
-  - Least Response Time
+  - ~~Least Response Time~~
   - ~~Random~~
 - ~~Have a great way to "deploy" the balancer (docker or releases)~~
 - ~~Health check on servers~~
-- n8n workflow that triggers with a webhook when a server is down to get telegram notifications
+- ~~n8n workflow that triggers with a webhook when a server is down to get telegram notifications~~
 - ~~Give a way to create test servers for testing the system~~
 - Test the algorithms and the proxy system with unit tests
 - Recovery system for the Down servers
@@ -45,6 +45,7 @@ How to write the config.json
 {
   "addr": ":8000", // the address that the load balancer runs
   "algorithm": "random", // the algorithm random, round-robin
+  "webhook": "https://n8n.server.com/webhook-test/something", // the workflow you created in n8n
   "healthCheckDelay": 10, // the second between each ping in the servers
   "servers": [
     {
@@ -64,6 +65,12 @@ How to write the config.json
 ```
 
 After this file is in place you will have the Go-balancer running and redirecting traffic to those servers and make them work better
+
+## N8N Configuration
+
+To make this work I expect to have an n8n instance up and running. Then create a new workflow with an notification service like discord, telegram, or anything other provider. Then you will be able to create a message like I did with telegram and get live information about the server status
+
+![N8N workflow](assets/n8n-workflow.png)
 
 ## References
 
