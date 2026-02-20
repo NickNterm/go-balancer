@@ -1,6 +1,7 @@
 {
   "addr": ":8000",
   "algorithm": "random",
+  "webhook": "https://n8n.pamelesxi.gr/webhook-test/healtherror",
   "healthCheckDelay": 10,
   "servers": [
     {

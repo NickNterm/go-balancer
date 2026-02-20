@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Algorithm    AlgorithmType  `json:"algorithm"`
 	Addr         string         `json:"addr"`
+	Webhook      string         `json:"webhook"`
 	Servers      []proxy.Server `json:"servers"`
 	HealthTicker int            `json:"healthCheckDelay"`
 }

@@ -21,7 +21,11 @@ func (app *application) HealthCheckEveryTime() {
 				wg.Add(1)
 				go func(proxy *proxy.Proxy) {
 					defer wg.Done()
+					wasHealthy := proxy.IsHealthy
 					CheckProxy(proxy)
+					if wasHealthy != proxy.IsHealthy {
+						app.InformServerStatus(*proxy)
+					}
 				}(&app.proxies[i])
 			}
 			wg.Wait()

@@ -23,6 +23,8 @@ func main() {
 		}
 	case Random:
 		algorithm = &algorithms.Random{}
+	case LeastResponseTime:
+		algorithm = &algorithms.LeastResponseTime{}
 	}
 	app := application{
 		config:    c,
