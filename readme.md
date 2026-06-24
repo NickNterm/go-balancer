@@ -1,82 +1,92 @@
 # Go Balancer
 
-This is a short project to learn some basics about _Golang_. Thinking about a project to implement I thought it would be fun to make something useful and simple in theory. The goal is to have a rather small but good project so that I can show some basic skills in go
+![Go](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 
-## What is the project about?
+A lightweight reverse-proxy **load balancer written from scratch in Go**. Point it at a pool of backend servers and it distributes incoming traffic across them using a configurable algorithm, health-checks each backend, and fires a webhook (e.g. Telegram via n8n) the moment a server goes down.
 
-I am trying to create a load balancer in _Go_ for learing purposes. In general the idea is simple. Let's say we have a service in a number of servers running and we need a service to distribute traffic out for many users. In most of the small projects that's not a problem but with huge loads a load balancer is a good solution.
+> You'd normally reach for Nginx, HAProxy, or a cloud LB in production — this is a from-scratch implementation built to understand *how* they actually work: reverse proxying, balancing strategies, and health checking.
 
-Idealy you wouldn't write your own load balancer but you would use a service like AWS, Cloudflare or Nginx etc. So getting this out of the way we are going to make our own load balancer with go with some simple algorithms and a list of more features you can see below!
+## Features
 
-The goal for me would be create some mock services with silly data and try to see how each algorithm treats the request and do tests around those
+- **Pluggable balancing algorithms** — pick one in config:
+  - ✅ Round Robin
+  - ✅ Random
+  - ✅ Least Response Time
+- **Active health checks** — each backend is pinged on an interval and pulled from rotation when unhealthy.
+- **Down-server alerting** — on failure it calls a configurable webhook; pair it with an n8n workflow to get Telegram/Discord notifications.
+- **Built-in test servers** — spin up mock backends to watch how each algorithm distributes load.
+- **Docker & releases** — runs from a prebuilt binary or as a container.
 
-## Features / What's next?
+### Roadmap
 
-So here will be a list of goals and what is already achived so I will call this done when most of them are fixed.
+- [ ] Weighted Round Robin, Least Connections, Weighted Least Connections, IP Hash
+- [ ] Unit tests for the algorithms and proxy layer
+- [ ] Automatic recovery for downed servers
+- [ ] Persist distribution stats and per-server uptime in a database
 
-- Support more algorithms
-  - ~~Round Robin~~
-  - Weighted Round Robin
-  - Least Connections
-  - Weighted Least Connections
-  - IP Hash
-  - ~~Least Response Time~~
-  - ~~Random~~
-- ~~Have a great way to "deploy" the balancer (docker or releases)~~
-- ~~Health check on servers~~
-- ~~n8n workflow that triggers with a webhook when a server is down to get telegram notifications~~
-- ~~Give a way to create test servers for testing the system~~
-- Test the algorithms and the proxy system with unit tests
-- Recovery system for the Down servers
-- **Hot** having a database to store basic stats for distribution
-- Store uptime for each server (like Kume does)
+## Architecture
 
-## How to run
+```
+            ┌──────────────┐  health checks   ┌────────────┐
+  clients ─▶│  Go Balancer │ ───────────────▶ │ backend #1 │
+            │  (reverse    │ ───────────────▶ │ backend #2 │
+            │   proxy +    │ ───────────────▶ │ backend #3 │
+            │   algorithm) │                  └────────────┘
+            └──────┬───────┘
+                   │ server down
+                   ▼
+            webhook → n8n → Telegram/Discord
+```
 
-You have a couple of ways to run this project
+## Getting started
 
-1. Clone this repo and use air to run it locally
-2. Use the releases in git and install the latest executable
-3. Also I would have dockerize it and let you docker pull it but it's not up in docker hub yet ):
+**Run locally** (with [air](https://github.com/air-verse/air) for hot reload):
 
-How to write the config.json
+```bash
+git clone https://github.com/NickNterm/go-balancer.git
+cd go-balancer
+air
+```
 
-```json
+Or grab a prebuilt binary from [Releases](https://github.com/NickNterm/go-balancer/releases), or run it in Docker via the included `Dockerfile`.
+
+## Configuration
+
+Create a `config.json` next to the binary:
+
+```jsonc
 {
-  "addr": ":8000", // the address that the load balancer runs
-  "algorithm": "random", // the algorithm random, round-robin
-  "webhook": "https://n8n.server.com/webhook-test/something", // the workflow you created in n8n
-  "healthCheckDelay": 10, // the second between each ping in the servers
+  "addr": ":8000",              // address the load balancer listens on
+  "algorithm": "round-robin",   // "round-robin" | "random" | "least-response-time"
+  "webhook": "https://n8n.server.com/webhook-test/something", // called when a server goes down
+  "healthCheckDelay": 10,       // seconds between health pings
   "servers": [
-    {
-      "addr": "http://localhost:9000", // http url from each server
-      "weigth": 0.9
-    },
-    {
-      "addr": "http://localhost:9001",
-      "weigth": 0.1
-    },
-    {
-      "addr": "http://localhost:9002",
-      "weigth": 0.1
-    }
+    { "addr": "http://localhost:9000", "weigth": 0.9 },
+    { "addr": "http://localhost:9001", "weigth": 0.1 },
+    { "addr": "http://localhost:9002", "weigth": 0.1 }
   ]
 }
 ```
 
-After this file is in place you will have the Go-balancer running and redirecting traffic to those servers and make them work better
+With the config in place, the balancer starts proxying incoming requests across the listed servers.
 
-## N8N Configuration
+## Down-server notifications (n8n)
 
-To make this work I expect to have an n8n instance up and running. Then create a new workflow with an notification service like discord, telegram, or anything other provider. Then you will be able to create a message like I did with telegram and get live information about the server status
+Run an n8n instance and create a workflow with a Webhook trigger feeding a notification node (Telegram, Discord, etc.). Point the `webhook` field above at that workflow and you'll get live alerts when a backend fails its health check.
 
-![N8N workflow](assets/n8n-workflow.png)
+![n8n workflow](assets/n8n-workflow.png)
 
 ## References
 
-If for some reasons you want to make something same and you are here you might need to check those cause they did a much better work than I did and learned though them. Great work!!:
+Projects and write-ups that helped while building this:
 
-- https://medium.com/@shehaan.avishka00/build-reverse-proxy-to-hide-frontend-por-1dba1b05190a
-- https://github.com/appleboy/loadbalancer-algorithms
-- https://github.com/AAVision/traffic-balancer
-- https://github.com/Zuyuf/Crafting-Own-Load-Balancer-with-Advanced-Features
+- [Build a reverse proxy to hide the frontend port](https://medium.com/@shehaan.avishka00/build-reverse-proxy-to-hide-frontend-por-1dba1b05190a)
+- [appleboy/loadbalancer-algorithms](https://github.com/appleboy/loadbalancer-algorithms)
+- [AAVision/traffic-balancer](https://github.com/AAVision/traffic-balancer)
+- [Zuyuf/Crafting-Own-Load-Balancer-with-Advanced-Features](https://github.com/Zuyuf/Crafting-Own-Load-Balancer-with-Advanced-Features)
+
+## License
+
+Released under the [Apache License 2.0](LICENSE).
